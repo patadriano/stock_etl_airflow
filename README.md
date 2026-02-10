@@ -24,7 +24,7 @@ This project showcases data engineering skills: **ETL, automation, and workflow 
 
 1. Extract Data
 
-  - Used Python and the yfinance library to download historical stock price data from Yahoo Finance.
+  * Used Python and the yfinance library to download historical stock price data from Yahoo Finance.
 
   - Stored the raw data in a Stock Price table, which serves as the foundation for further calculations.
 
