@@ -20,55 +20,54 @@ This project showcases data engineering skills: **ETL, automation, and workflow 
 
 ---
 
-Project Workflow / Process
+## Project Workflow / Process
 
-Extract Data
+1. Extract Data
 
-Used Python and the yfinance library to download historical stock price data from Yahoo Finance.
+- Used Python and the yfinance library to download historical stock price data from Yahoo Finance.
 
-Stored the raw data in a Stock Price table, which serves as the foundation for further calculations.
+- Stored the raw data in a Stock Price table, which serves as the foundation for further calculations.
 
-Transform Data
+2. Transform Data
 
-Computed technical indicators:
+- Computed technical indicators:
 
-MA20 (20-day moving average)
+- MA20 (20-day moving average)
 
-MA50 (50-day moving average)
+- MA50 (50-day moving average)
 
-RSI (Relative Strength Index)
+- RSI (Relative Strength Index)
 
-These calculations were stored in a separate Indicator table for clarity and reusability.
+- Stored these results in a separate Indicator table.
 
-Used Python with Spark (PySpark) to handle transformations efficiently for larger datasets.
+- Used Python with Spark (PySpark) for efficient computation on larger datasets.
 
-Load Data
+3. Load Data
 
-Loaded the processed data into PostgreSQL, ensuring tables were structured for efficient querying.
+- Loaded the processed data into PostgreSQL.
 
-Maintained a Transaction table to log all buy/sell actions, simulating a trading workflow.
+- Created a Transaction table to log all buy/sell actions, simulating a trading workflow.
 
-Automation & Orchestration
+4. Automation & Orchestration
 
-Used Apache Airflow to automate the pipeline, scheduling daily runs.
+- Used Apache Airflow to automate the pipeline, scheduling daily runs.
 
-Tasks were organized as DAGs:
+- Pipeline organized as DAGs:
 
-Extract → Stock Price Table
+1. Extract → Stock Price Table
 
-Transform → Indicator Table
+2. Transform → Indicator Table
 
-Load → PostgreSQL / Transaction Table
+3. Load → PostgreSQL / Transaction Table
 
-Skills Demonstrated
+5. Skills Demonstrated
 
-End-to-end ETL pipeline development
+- End-to-end ETL pipeline development
 
-Automation with Airflow DAGs
+- Automation with Airflow DAGs
 
-Handling and transforming financial data using Python and Spark
+- Handling and transforming financial data using Python and Spark
 
-Database management in PostgreSQL
+- Database management in PostgreSQL
 
-Logging and tracking simulated transactions
-
+- Logging and tracking simulated transactions
