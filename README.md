@@ -12,11 +12,12 @@ This project showcases data engineering skills: **ETL, automation, and workflow 
 ---
 
 ## Tech Stack
-- Python 3.9
+- Python (yfinance, pandas, sqlalchemy, psycopg2-binary)
 - Pandas
 - PostgreSQL
 - Apache Airflow
-- yfinance
+- Docker
+- Power BI
 
 ---
 
