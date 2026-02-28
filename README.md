@@ -1,101 +1,74 @@
-# Stock Prices Loader — Docker + PostgreSQL
+# Stock ETL Pipeline with Airflow
 
-## Project Structure
-```
-.
-├── docker-compose.yml   # PostgreSQL service + loader service definition
-├── Dockerfile           # Python image for the loader
-├── load_stocks.py       # The ETL script (yfinance → PostgreSQL)
-├── requirements.txt     # Python dependencies
-└── README.md
-```
+## Overview
+This project demonstrates an end-to-end data pipeline that:
+- Extracts stock price data from Yahoo Finance
+- Cleans and transforms the data (moving averages: MA20, MA50 and RSI)
+- Loads the data into PostgreSQL
+- Automates the pipeline using Apache Airflow
 
----
-
-## 1. Start PostgreSQL
-
-```bash
-docker compose up -d postgres
-```
-
-This starts a PostgreSQL 16 container with:
-- **Database:** `stocksdb`
-- **User:** `stocksuser`
-- **Password:** `stockspass`
-- **Port:** `5432` (exposed to host)
+This project showcases data engineering skills: **ETL, automation, and workflow management**.
 
 ---
 
-## 2. Build the loader image
-
-```bash
-docker compose build loader
-```
-
----
-
-## 3. Run the script manually (whenever you want)
-
-```bash
-docker compose run --rm loader
-```
-
-This runs `load_stocks.py` inside a container that is connected to the
-`stocks_postgres` container via Docker's internal network.
-
-### Re-running
-
-The script uses `if_exists="append"` so it will **add** rows on each run.
-If you want to **replace** the data instead, change line in `load_stocks.py`:
-```python
-# Change:
-if_exists="append"
-# To:
-if_exists="replace"
-```
+## Tech Stack
+- Python (yfinance, pandas, sqlalchemy, psycopg2-binary)
+- Pandas
+- PostgreSQL
+- Apache Airflow
+- Docker
+- Power BI
 
 ---
 
-## 4. Connect to PostgreSQL to verify
+## Project Workflow / Process
 
-**From host machine:**
-```bash
-psql -h localhost -p 5432 -U stocksuser -d stocksdb
-```
+1. Extract Data
 
-**Inside Docker:**
-```bash
-docker exec -it stocks_postgres psql -U stocksuser -d stocksdb
-```
+  * Used Python and the yfinance library to download historical stock price data from Yahoo Finance.
 
-**Sample queries:**
-```sql
--- Row count
-SELECT ticker, COUNT(*) FROM stock_prices GROUP BY ticker;
+  - Stored the raw data in a Stock Price table, which serves as the foundation for further calculations.
 
--- Latest prices
-SELECT * FROM stock_prices ORDER BY date DESC LIMIT 10;
+2. Transform Data
 
--- Date range
-SELECT MIN(date), MAX(date) FROM stock_prices;
-```
+  - Computed technical indicators:
 
----
+  - MA20 (20-day moving average)
 
-## 5. Stop everything
+  - MA50 (50-day moving average)
 
-```bash
-docker compose down          # stop containers (keeps data volume)
-docker compose down -v       # stop + delete all data
-```
+  - RSI (Relative Strength Index)
 
----
+  - Stored these results in a separate Indicator table.
 
-## Environment Variables
+  - Used Python with Spark (PySpark) for efficient computation on larger datasets.
 
-The script reads connection settings from env vars (set in `docker-compose.yml`).
-You can override them when running manually:
+3. Load Data
 
-```bash
-DB_HOST=localhost DB_PORT=5432 python load_stocks.py
-```
+  - Loaded the processed data into PostgreSQL.
+
+  - Created a Transaction table to log all buy/sell actions, simulating a trading workflow.
+
+4. Automation & Orchestration
+
+  - Used Apache Airflow to automate the pipeline, scheduling daily runs.
+
+  - Pipeline organized as DAGs:
+
+  1. Extract → Stock Price Table
+
+  2. Transform → Indicator Table
+
+  3. Load → PostgreSQL / Transaction Table
+
+5. Skills Demonstrated
+
+  - End-to-end ETL pipeline development
+
+  - Automation with Airflow DAGs
+
+  - Handling and transforming financial data using Python and Spark
+
+  - Database management in PostgreSQL
+
+  - Logging and tracking simulated transactions
