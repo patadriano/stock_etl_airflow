@@ -5,8 +5,9 @@
 This project demonstrates an end-to-end data pipeline that:
 
 - Extracts historical stock price data from Yahoo Finance for popular US stocks  
-- Computes technical indicators (MA20, MA50, RSI) and generates buy/sell signals based on MA Cross and RSI strategies  
-- Evaluates which strategy yields the highest simulated profit  
+- Computes technical indicators (MA20, MA50, RSI) and generates buy/sell signals  
+- Evaluates strategy performance through simulated trading  
+- Computes total profit/loss per strategy  
 - Loads the data into PostgreSQL and automates the pipeline using Apache Airflow  
 
 This project showcases data engineering skills: ETL, automation, and workflow management.
@@ -28,42 +29,104 @@ This project showcases data engineering skills: ETL, automation, and workflow ma
 ## Project Workflow
 
 ### 1. Extract Data
-- Used Python and the yfinance library to download historical stock price data for:
-  - AAPL (Apple)
-  - MSFT (Microsoft)
-  - GOOGL (Google)
-  - NVDA (Nvidia)
-  - AMZN (Amazon)
-
-- Stored raw data in a `stock_price` table.
+- Downloaded historical stock data (AAPL, MSFT, GOOGL, NVDA, AMZN) using `yfinance`
+- Stored in `stock_price` table
 
 ---
 
 ### 2. Transform Data
-- Computed technical indicators:
-  - MA20 (20-day moving average)
-  - MA50 (50-day moving average)
-  - RSI (Relative Strength Index)
+- Computed indicators:
+  - MA20
+  - MA50
+  - RSI
 
-- Generated buy/sell signals:
-  - **MA_CROSS**  
-    - Buy: MA20 crosses above MA50  
-    - Sell: MA20 crosses below MA50  
+- Generated signals:
+  - **MA_CROSS**
+  - **RSI**
 
-  - **RSI**  
-    - Buy: RSI < 30 (oversold)  
-    - Sell: RSI > 70 (overbought)
-
-- Stored results in:
-  - `indicator` table  
-  - `signal` table  
+- Stored in:
+  - `indicator`
+  - `signal`
 
 ---
 
 ### 3. Load Data
-- Loaded processed data into PostgreSQL  
-- Logged simulated trades in a `transaction` table for performance tracking  
+- Stored simulated trades in `transaction` table  
+- Each record includes:
+  - strategy
+  - stock
+  - buy/sell price
+  - profit/loss per trade  
 
 ---
 
-### 4. Automation (Airflow DAGs)
+### 4. Compute Profit/Loss (NEW)
+- Aggregated transaction data to compute:
+  - Total profit/loss per strategy
+  - Total profit/loss per stock
+  - Overall strategy performance ranking  
+
+- Stored results in:
+  - `strategy_performance` table  
+
+---
+
+### 5. Automation (Airflow DAGs)
+DAG 1: Extract
+→ Pulls stock data from Yahoo Finance
+→ Stores in stock_price table
+
+DAG 2: Transform
+→ Reads stock_price
+→ Computes MA20, MA50, RSI
+→ Stores in indicator table
+
+DAG 3: Load
+→ Reads indicator
+→ Generates signals & trade logs
+→ Stores in transaction table
+
+DAG 4: Performance Aggregation (NEW)
+→ Reads transaction table
+→ Computes total profit/loss per strategy & stock
+→ Stores in strategy_performance table
+
+
+---
+
+## Analysis & Visualization
+
+- Connected PostgreSQL to Power BI  
+- Dashboard includes:
+  - Total profit/loss per strategy  
+  - Strategy comparison (MA_CROSS vs RSI)  
+  - Performance by stock (AAPL, MSFT, etc.)  
+
+---
+
+## Docker Setup
+
+- Used Docker & Docker Compose to run:
+  - Apache Airflow
+  - PostgreSQL  
+
+---
+
+## Skills Demonstrated
+
+- End-to-end ETL pipeline development  
+- Workflow orchestration using Airflow  
+- Financial data processing with Pandas  
+- Strategy backtesting and evaluation  
+- SQL-based aggregation and analytics  
+- Data visualization with Power BI  
+- Containerization with Docker  
+
+---
+
+## Possible Improvements
+
+- Add more strategies (MACD, Bollinger Bands)  
+- Implement real-time streaming (Kafka)  
+- Add alerting (email/slack) for pipeline failures  
+- Deploy to cloud (AWS / GCP)  
